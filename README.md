@@ -1,36 +1,150 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="./app/icon.svg" width="72" height="72" alt="ERC-8213 mark" />
+</p>
 
-## Getting Started
+<h1 align="center">ERC-8213</h1>
 
-First, run the development server:
+<p align="center">
+  <em>Wallet Signature &amp; Calldata Digest Display</em><br/>
+  Cryptographic fingerprints, displayed honestly.
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-e6492c.svg?style=flat-square" /></a>
+  <a href="https://github.com/ethereum/ERCs/pull/1639"><img alt="Spec: PR-1639" src="https://img.shields.io/badge/spec-PR--1639-0c0a08.svg?style=flat-square" /></a>
+  <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-0c0a08.svg?style=flat-square" />
+  <img alt="Static export · IPFS-portable" src="https://img.shields.io/badge/static-IPFS--portable-0c0a08.svg?style=flat-square" />
+</p>
+
+---
+
+## Table of contents
+
+- [Table of contents](#table-of-contents)
+- [About](#about)
+- [What ERC-8213 standardises](#what-erc-8213-standardises)
+- [Site map](#site-map)
+- [Quick start](#quick-start)
+- [Project structure](#project-structure)
+- [Scripts](#scripts)
+- [Deployment](#deployment)
+  - [Vercel](#vercel)
+  - [IPFS / static host](#ipfs--static-host)
+- [Cross-repo digest parity](#cross-repo-digest-parity)
+- [Contributing](#contributing)
+- [License](#license)
+
+## About
+
+A small, static documentation site for **[ERC-8213](https://github.com/ethereum/ERCs/pull/1639)** — an Ethereum standard that asks wallets to display short, reproducible cryptographic fingerprints (digests) for the things a user is about to sign, so signing decisions can be independently verified.
+
+The site is intended for four audiences:
+
+1. **Curious users** — *what is this and why does it matter?*
+2. **Wallet developers** — *what do I compute and where do I display it?*
+3. **Signers** — *how do I check that a digest my wallet shows me is correct?*
+4. **The mathematically curious** — *show me every byte from typed data to digest.*
+
+## What ERC-8213 standardises
+
+| Digest              | Formula                                                     | Used for                                                                                            |
+| ------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **EIP-712 Digest**  | `keccak256(0x1901 ‖ domainSeparator ‖ hashStruct(message))` | The single value an ECDSA signer signs for typed data.                                              |
+| **Domain Hash**     | `hashStruct(eip712Domain)`                                  | Fingerprint of the dapp's claimed identity.                                                         |
+| **Message Hash**    | `hashStruct(message)`                                       | Fingerprint of the typed message.                                                                   |
+| **Calldata Digest** | `keccak256(uint256(len(calldata)) ‖ calldata)`              | Length-prefixed fingerprint of raw transaction calldata. ChainId is intentionally **not** included. |
+
+## Site map
+
+| Route        | Purpose                                                                                                                     |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `/`          | Overview · the four digests at a glance · why they matter.                                                                  |
+| `/wallets`   | Live support matrix. Logos pulled from [walletbeat](https://github.com/walletbeat/walletbeat). Updates land via PR.         |
+| `/implement` | Builder guide: decision tree, display rules, reference snippets in TypeScript, Rust, and Swift, common pitfalls.            |
+| `/verify`    | Client-side verifier. Paste typed-data JSON or `0x…` calldata and watch the four digests recompute live.                    |
+| `/compute`   | Pedagogical walkthrough: every type string, typeHash, struct hash, EIP-191 preimage, and final digest, traced byte by byte. |
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install deps (pnpm preferred — repo ships pnpm-lock.yaml)
+pnpm install
+
+# Run the dev server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> Requires Node.js 20 LTS or 22 LTS, and pnpm 9+.<br/>
+> Other package managers work — replace `pnpm` with `npm` or `yarn` in any command below.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```
+app/
+├── components/        Reusable UI primitives (Frame, DigestPanel, CopyHex, …)
+├── lib/
+│   ├── digests.ts     viem-based EIP-712 + calldata digest computation
+│   └── example.ts     Canonical Permit2 + Uniswap V3 fixtures
+├── wallets/
+│   ├── data.ts        Wallet support matrix (PR-friendly JSON-shape)
+│   └── page.tsx
+├── verify/            Client-side verifier (uses lib/digests.ts in the browser)
+├── compute/           Pedagogical walkthrough (build-time digests)
+├── implement/         Builder guide
+├── globals.css        Theme tokens, frame/grain/typography styles
+├── layout.tsx         Root layout, fonts, nav, footer
+├── page.tsx           Overview / homepage
+├── icon.svg           Primary favicon (modern browsers)
+├── favicon.ico        Legacy favicon
+└── apple-icon.png     iOS home-screen icon
 
-To learn more about Next.js, take a look at the following resources:
+public/
+└── wallets/           Brand SVGs sourced from walletbeat
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command      | What it does                                                        |
+| ------------ | ------------------------------------------------------------------- |
+| `pnpm dev`   | Start Next.js dev server with Turbopack.                            |
+| `pnpm build` | Production build → static export in `out/`.                         |
+| `pnpm start` | Serve the production build (mostly a no-op for `output: "export"`). |
+| `pnpm lint`  | Run `eslint`. The repo has a zero-warnings policy.                  |
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The site is a vanilla Next.js project with `output: "export"`. Connect the repo on Vercel and ship — no environment variables required.
+
+### IPFS / static host
+
+`pnpm build` emits a fully static site to `out/` with relative routes (`trailingSlash: true`, `images: { unoptimized: true }`). It runs from any static host or directly from IPFS:
+
+```bash
+pnpm build
+# ipfs add -r out/
+# or upload `out/` to S3 / Cloudflare Pages / GitHub Pages / etc.
+```
+
+## Cross-repo digest parity
+
+Digest math in this repo uses **viem**. The companion repo [`cyfrin/chain-tools`](https://github.com/cyfrin/chain-tools) implements the same digests with **ethers**, plus a Python reference implementation. A vitest suite over there imports both libraries and asserts byte-for-byte equality on shared fixtures (`src/lib/erc8213-parity.test.ts`).
+
+If you change the digest implementation here, run that parity test before publishing — drift between the two libraries would mean a wallet verifying against one would see a false mismatch on the other.
+
+## Contributing
+
+The most useful contribution is **updating the wallet support matrix**. Edit [`app/wallets/data.ts`](./app/wallets/data.ts), open a PR, and:
+
+- Reference the wallet's release notes or commit that adds digest display.
+- Drop the brand SVG in `public/wallets/` (sourced from [walletbeat](https://github.com/walletbeat/walletbeat) when possible, so logos stay consistent across the ecosystem).
+- Bump `lastUpdated` in the same file.
+
+Code-level contributions: open an issue first if it's a non-trivial change. The site is intentionally small and tries to stay that way.
+
+## License
+
+Released under the [MIT License](./LICENSE) © 2026 Cyfrin Inc.
