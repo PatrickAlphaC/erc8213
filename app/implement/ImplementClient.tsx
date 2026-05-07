@@ -177,16 +177,152 @@ export default function ImplementClient() {
 
             <div className="mt-10 space-y-8">
               <CodeBlock language="TypeScript · viem" filename="digests.ts" raw={tsCode}>
-                <code>{tsCode}</code>
+                <code>
+                  <span className="kw">import</span>
+                  {" {\n  "}
+                  <span className="fn">keccak256</span>,{" "}
+                  <span className="fn">toBytes</span>,{" "}
+                  <span className="fn">hashTypedData</span>,{"\n  "}
+                  <span className="fn">hashDomain</span>,{" "}
+                  <span className="fn">hashStruct</span>,{" "}
+                  <span className="fn">concat</span>,{" "}
+                  <span className="fn">numberToHex</span>,{"\n"}
+                  {"} "}
+                  <span className="kw">from</span>{" "}
+                  <span className="str">{`'viem'`}</span>
+                  {"\n\n"}
+                  <span className="com">{`// 1. EIP-712 digests`}</span>
+                  {"\n"}
+                  <span className="kw">const</span> domainHash{"  "}={" "}
+                  <span className="fn">hashDomain</span>{"({ domain, types })"}
+                  {"\n"}
+                  <span className="kw">const</span> messageHash ={" "}
+                  <span className="fn">hashStruct</span>
+                  {"({ data: message, types, primaryType })"}
+                  {"\n"}
+                  <span className="kw">const</span> digest{"      "}={" "}
+                  <span className="fn">hashTypedData</span>
+                  {"({ domain, types, primaryType, message })"}
+                  {"\n\n"}
+                  <span className="com">
+                    {`// 2. Calldata digest — chainId is intentionally NOT mixed in`}
+                  </span>
+                  {"\n"}
+                  <span className="kw">function</span>{" "}
+                  <span className="fn">calldataDigest</span>(calldata:{" "}
+                  <span className="str">{`\`0x\${string}\``}</span>):{" "}
+                  <span className="str">{`\`0x\${string}\``}</span> {"{"}
+                  {"\n  "}
+                  <span className="kw">const</span> bytes{"   "}={" "}
+                  <span className="fn">toBytes</span>(calldata)
+                  {"\n  "}
+                  <span className="kw">const</span> lenWord ={" "}
+                  <span className="fn">numberToHex</span>(bytes.length, {"{ size: "}
+                  <span className="num">32</span>
+                  {" })"}
+                  {"\n  "}
+                  <span className="kw">return</span>{" "}
+                  <span className="fn">keccak256</span>({" "}
+                  <span className="fn">concat</span>([
+                  <span className="fn">toBytes</span>(lenWord), bytes]) )
+                  {"\n"}
+                  {"}"}
+                </code>
               </CodeBlock>
+
               <CodeBlock language="Rust · alloy" filename="digests.rs" raw={rsCode}>
-                <code>{rsCode}</code>
+                <code>
+                  <span className="kw">use</span>{" "}
+                  alloy_primitives::{"{keccak256, B256, U256}"};{"\n\n"}
+                  <span className="com">
+                    {`// Calldata digest: keccak256( uint256(len) ‖ calldata )`}
+                  </span>
+                  {"\n"}
+                  <span className="kw">pub fn</span>{" "}
+                  <span className="fn">calldata_digest</span>(calldata:{" "}
+                  <span className="kw">&</span>[
+                  <span className="kw">u8</span>]) -&gt; B256 {"{"}
+                  {"\n    "}
+                  <span className="kw">let mut</span> buf = Vec::
+                  <span className="fn">with_capacity</span>(<span className="num">32</span>{" "}
+                  + calldata.<span className="fn">len</span>());
+                  {"\n    "}
+                  buf.<span className="fn">extend_from_slice</span>(&U256::
+                  <span className="fn">from</span>(calldata.
+                  <span className="fn">len</span>()).
+                  <span className="fn">to_be_bytes</span>::&lt;
+                  <span className="num">32</span>&gt;());
+                  {"\n    "}
+                  buf.<span className="fn">extend_from_slice</span>(calldata);
+                  {"\n    "}
+                  <span className="fn">keccak256</span>(&buf)
+                  {"\n"}
+                  {"}"}
+                  {"\n\n"}
+                  <span className="com">
+                    {`// EIP-712 digest is alloy_sol_types::SolStruct::eip712_signing_hash`}
+                  </span>
+                  {"\n"}
+                  <span className="com">
+                    {`// or compute manually:  keccak256(0x1901 ‖ domain_separator ‖ struct_hash)`}
+                  </span>
+                </code>
               </CodeBlock>
+
               <CodeBlock language="Swift · CryptoKit" filename="digests.swift" raw={swiftCode}>
-                <code>{swiftCode}</code>
+                <code>
+                  <span className="kw">import</span> CryptoKit{"\n\n"}
+                  <span className="com">{`// Calldata digest`}</span>
+                  {"\n"}
+                  <span className="kw">func</span>{" "}
+                  <span className="fn">calldataDigest</span>(_ calldata: Data) -&gt; Data {"{"}
+                  {"\n    "}
+                  <span className="kw">var</span> preimage = Data(count: <span className="num">32</span> - lengthBytes(calldata.count).count)
+                  {"\n    "}
+                  preimage.<span className="fn">append</span>(lengthBytes(calldata.count)){"   "}
+                  <span className="com">{`// big-endian uint256`}</span>
+                  {"\n    "}
+                  preimage.<span className="fn">append</span>(calldata)
+                  {"\n    "}
+                  <span className="kw">return</span> Data(SHA3_256.<span className="fn">hash</span>(data: preimage))     <span className="com">{`// keccak256, not SHA3`}</span>
+                  {"\n"}
+                  {"}"}
+                </code>
               </CodeBlock>
+
               <CodeBlock language="Solidity" filename="Digests.sol" raw={solCode}>
-                <code>{solCode}</code>
+                <code>
+                  <span className="com">{`// SPDX-License-Identifier: MIT`}</span>
+                  {"\n"}
+                  <span className="kw">pragma solidity</span>{" "}
+                  <span className="num">^0.8.20</span>;{"\n\n"}
+                  <span className="com">
+                    {`// Calldata digest — keccak256( uint256(len(data)) ‖ data )`}
+                  </span>
+                  {"\n"}
+                  <span className="kw">function</span>{" "}
+                  <span className="fn">calldataDigest</span>(<span className="kw">bytes calldata</span> data){" "}
+                  <span className="kw">pure returns</span> (<span className="kw">bytes32</span>) {"{"}
+                  {"\n    "}
+                  <span className="kw">return</span>{" "}
+                  <span className="fn">keccak256</span>(<span className="fn">abi.encodePacked</span>(<span className="kw">uint256</span>(data.length), data));
+                  {"\n"}
+                  {"}"}
+                  {"\n\n"}
+                  <span className="com">
+                    {`// EIP-712 digest — for verifying typed-data signatures on-chain`}
+                  </span>
+                  {"\n"}
+                  <span className="kw">function</span>{" "}
+                  <span className="fn">eip712Digest</span>(<span className="kw">bytes32</span> domainHash, <span className="kw">bytes32</span> messageHash){" "}
+                  <span className="kw">pure returns</span> (<span className="kw">bytes32</span>) {"{"}
+                  {"\n    "}
+                  <span className="kw">return</span>{" "}
+                  <span className="fn">keccak256</span>(<span className="fn">abi.encodePacked</span>(
+                  <span className="str">{`hex"1901"`}</span>, domainHash, messageHash));
+                  {"\n"}
+                  {"}"}
+                </code>
               </CodeBlock>
             </div>
           </div>
