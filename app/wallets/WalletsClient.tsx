@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import Image from "next/image";
 import { PageHeader } from "../components/PageHeader";
 import { Frame } from "../components/Frame";
@@ -11,19 +12,11 @@ import {
   type Wallet,
 } from "./data";
 
-export const metadata: Metadata = {
-  title: "Wallet Support — ERC-8213",
-  description:
-    "Which wallets implement ERC-8213 digest display today, and which haven't yet.",
-};
-
 function Logo({ w }: { w: Wallet }) {
   return (
     <div
       className="w-12 h-12 shrink-0 flex items-center justify-center border p-1.5"
       style={{
-        // Bone background tinted slightly with the brand colour, so dark logos
-        // (Ledger, Trezor, Keystone, Family…) read clearly on a dark page.
         background: `color-mix(in srgb, var(--color-ink) 90%, ${w.color} 10%)`,
         borderColor: `${w.color}66`,
       }}
@@ -44,9 +37,7 @@ function StatusBadge({ s }: { s: Wallet["support"] }) {
     return (
       <span className="inline-flex items-center gap-2">
         <span className="dot dot-ok" />
-        <span className="text-ok text-xs tracking-[0.15em] uppercase">
-          {supportLabel[s]}
-        </span>
+        <span className="text-ok text-xs tracking-[0.15em] uppercase">{supportLabel[s]}</span>
       </span>
     );
   }
@@ -54,9 +45,7 @@ function StatusBadge({ s }: { s: Wallet["support"] }) {
     return (
       <span className="inline-flex items-center gap-2">
         <span className="dot dot-warn" />
-        <span className="text-warn text-xs tracking-[0.15em] uppercase">
-          {supportLabel[s]}
-        </span>
+        <span className="text-warn text-xs tracking-[0.15em] uppercase">{supportLabel[s]}</span>
       </span>
     );
   }
@@ -64,23 +53,19 @@ function StatusBadge({ s }: { s: Wallet["support"] }) {
     return (
       <span className="inline-flex items-center gap-2">
         <span className="dot dot-err" />
-        <span className="text-err text-xs tracking-[0.15em] uppercase">
-          {supportLabel[s]}
-        </span>
+        <span className="text-err text-xs tracking-[0.15em] uppercase">{supportLabel[s]}</span>
       </span>
     );
   }
   return (
     <span className="inline-flex items-center gap-2">
-      <span className="dot bg-ink-faint" style={{ background: "var(--color-ink-faint)" }} />
-      <span className="text-ink-faint text-xs tracking-[0.15em] uppercase">
-        {supportLabel[s]}
-      </span>
+      <span className="dot" style={{ background: "var(--color-ink-faint)" }} />
+      <span className="text-ink-faint text-xs tracking-[0.15em] uppercase">{supportLabel[s]}</span>
     </span>
   );
 }
 
-export default function WalletsPage() {
+export default function WalletsClient() {
   const supported = wallets.filter((w) => w.support === "yes");
   const notSupported = wallets.filter(
     (w) => w.support === "no" || w.support === "partial",
@@ -93,16 +78,12 @@ export default function WalletsPage() {
         kicker="ecosystem · support matrix"
         title={
           <>
-            Who&apos;s
-            <span className="serif-italic text-ink-dim"> shipped </span>it?
+            Who&apos;s<span className="serif-italic text-ink-dim"> shipped </span>it?
           </>
         }
         description={
           <>
-            Live tally of wallet support for ERC-8213. The bar is simple: does
-            the wallet display at least the EIP-712 digest, or the calldata
-            digest, in a place a signer can read it before approving? Updates
-            arrive by pull request.
+            Live tally of wallet support for ERC-8213. The bar is simple: does the wallet display at least the EIP-712 digest, or the calldata digest, in a place a signer can read it before approving? Updates arrive by pull request.
           </>
         }
       />
@@ -115,15 +96,11 @@ export default function WalletsPage() {
           </div>
           <div className="col-span-12 md:col-span-3">
             <div className="marginalia">implemented</div>
-            <div className="mt-1 text-3xl text-ok tnum">
-              {supported.length.toString().padStart(2, "0")}
-            </div>
+            <div className="mt-1 text-3xl text-ok tnum">{supported.length.toString().padStart(2, "0")}</div>
           </div>
           <div className="col-span-12 md:col-span-3">
             <div className="marginalia">outstanding</div>
-            <div className="mt-1 text-3xl text-err tnum">
-              {notSupported.length.toString().padStart(2, "0")}
-            </div>
+            <div className="mt-1 text-3xl text-err tnum">{notSupported.length.toString().padStart(2, "0")}</div>
           </div>
           <div className="col-span-12 md:col-span-4 flex md:justify-end items-end">
             <a
@@ -138,7 +115,6 @@ export default function WalletsPage() {
         </div>
       </section>
 
-      {/* Implemented section */}
       <section className="mx-auto max-w-[1280px] px-6 md:px-10 mt-12">
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 md:col-span-2">
@@ -164,34 +140,20 @@ export default function WalletsPage() {
                         <StatusBadge s={w.support} />
                       </div>
                       {w.notes ? (
-                        <p className="mt-3 text-sm text-ink-dim leading-relaxed max-w-[680px]">
-                          {w.notes}
-                        </p>
+                        <p className="mt-3 text-sm text-ink-dim leading-relaxed max-w-[680px]">{w.notes}</p>
                       ) : null}
                       <div className="mt-3 flex flex-wrap gap-4 text-xs text-ink-faint">
                         {w.url ? (
-                          <a
-                            className="link"
-                            href={w.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <a className="link" href={w.url} target="_blank" rel="noopener noreferrer">
                             Website ↗
                           </a>
                         ) : null}
                         {w.ref ? (
-                          <a
-                            className="link"
-                            href={w.ref}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <a className="link" href={w.ref} target="_blank" rel="noopener noreferrer">
                             Reference ↗
                           </a>
                         ) : (
-                          <span className="text-ink-faint italic serif-italic">
-                            no reference
-                          </span>
+                          <span className="text-ink-faint italic serif-italic">no reference</span>
                         )}
                       </div>
                     </div>
@@ -203,13 +165,10 @@ export default function WalletsPage() {
         </div>
       </section>
 
-      {/* Outstanding */}
       <section className="mx-auto max-w-[1280px] px-6 md:px-10 mt-24 mb-32">
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 md:col-span-2">
-            <div className="section-num" style={{ color: "var(--color-err)" }}>
-              § 01.B
-            </div>
+            <div className="section-num" style={{ color: "var(--color-err)" }}>§ 01.B</div>
             <div className="marginalia mt-2">outstanding</div>
           </div>
           <div className="col-span-12 md:col-span-10">
@@ -218,15 +177,8 @@ export default function WalletsPage() {
               {notSupported.length.toString().padStart(2, "0")}
             </h2>
             <p className="mt-3 text-ink-dim text-sm max-w-[640px] leading-relaxed">
-              These wallets do not yet expose ERC-8213 digests in their signing
-              UI. If you contribute to one, the{" "}
-              <a
-                className="link"
-                href="/implement"
-              >
-                implementation guide
-              </a>{" "}
-              and the{" "}
+              These wallets do not yet expose ERC-8213 digests in their signing UI. If you contribute to one, the{" "}
+              <a className="link" href="#/implement">implementation guide</a> and the{" "}
               <a
                 className="link"
                 href="https://github.com/ethereum/ERCs/pull/1639"
@@ -237,7 +189,6 @@ export default function WalletsPage() {
               </a>{" "}
               are the place to start.
             </p>
-
             <OutstandingGrid wallets={notSupported} />
           </div>
         </div>

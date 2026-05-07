@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import { keccak256, toBytes, toHex, concat, numberToHex } from "viem";
 import { PageHeader } from "../components/PageHeader";
 import { Frame } from "../components/Frame";
@@ -6,13 +7,6 @@ import { OpenInCyfrin } from "../components/OpenInCyfrin";
 import { eip712Digests, calldataDigest, byteLen } from "../lib/digests";
 import { examplePermit, exampleCalldata } from "../lib/example";
 
-export const metadata: Metadata = {
-  title: "Compute — ERC-8213",
-  description:
-    "A worked example: every byte and every hash that lead from typed data to an ERC-8213 digest.",
-};
-
-/** Build the EIP-712 type string the way EIP-712 specifies. */
 function typeString(
   types: Record<string, ReadonlyArray<{ name: string; type: string }>>,
   primary: string,
@@ -31,18 +25,16 @@ function typeString(
     }
   };
   visit(primary);
-  // EIP-712: primary first, then dependencies in alphabetical order
   const tail = order.slice(1).sort();
   const final = [primary, ...tail];
   return final
     .map(
-      (n) =>
-        `${n}(${(types[n] ?? []).map((f) => `${f.type} ${f.name}`).join(",")})`,
+      (n) => `${n}(${(types[n] ?? []).map((f) => `${f.type} ${f.name}`).join(",")})`,
     )
     .join("");
 }
 
-export default function ComputePage() {
+export default function ComputeClient() {
   const { domain, types, primaryType, message } = examplePermit;
 
   const domainTypeStr = typeString(
@@ -73,23 +65,14 @@ export default function ComputePage() {
       <PageHeader
         num="04"
         kicker="for the curious"
-        title={
-          <>
-            Every byte,
-            <span className="serif-italic text-ink-dim"> traced.</span>
-          </>
-        }
+        title={<>Every byte,<span className="serif-italic text-ink-dim"> traced.</span></>}
         description={
           <>
-            A real example from typed data to digest, with every intermediate
-            value surfaced. If you can reproduce these numbers with paper and a
-            keccak implementation, you can audit any wallet that claims to
-            implement ERC-8213.
+            A real example from typed data to digest, with every intermediate value surfaced. If you can reproduce these numbers with paper and a keccak implementation, you can audit any wallet that claims to implement ERC-8213.
           </>
         }
       />
 
-      {/* Section A: EIP-712 walkthrough */}
       <section className="mx-auto max-w-[1280px] px-6 md:px-10 mb-32">
         <div className="grid grid-cols-12 gap-6">
           <div className="col-span-12 md:col-span-2">
@@ -102,9 +85,7 @@ export default function ComputePage() {
           <div className="col-span-12 md:col-span-10 space-y-12">
             <Step num="01" title="Start with typed data">
               <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                A Permit2 signing request authorising a transfer of 1,000 USDC.
-                Every field below is part of what we&apos;re cryptographically
-                committing to.
+                A Permit2 signing request authorising a transfer of 1,000 USDC. Every field below is part of what we&apos;re cryptographically committing to.
               </p>
               <Frame className="p-5">
                 <pre className="text-xs leading-relaxed text-ink overflow-x-auto">
@@ -115,18 +96,13 @@ export default function ComputePage() {
 
             <Step num="02" title="Encode the EIP-712 type strings">
               <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                EIP-712 specifies a deterministic textual encoding: primary
-                struct first, dependencies sorted alphabetically.
+                EIP-712 specifies a deterministic textual encoding: primary struct first, dependencies sorted alphabetically.
               </p>
               <Labeled label="domain type">
-                <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all">
-                  {domainTypeStr}
-                </code>
+                <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all">{domainTypeStr}</code>
               </Labeled>
               <Labeled label="message type">
-                <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all">
-                  {messageTypeStr}
-                </code>
+                <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all">{messageTypeStr}</code>
               </Labeled>
             </Step>
 
@@ -140,10 +116,7 @@ export default function ComputePage() {
 
             <Step num="04" title="Encode and hash each struct">
               <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                <code className="inline">hashStruct(s) =
-                  keccak256(typeHash ‖ encodeData(s))</code>
-                . encodeData replaces dynamic types with their hashes and
-                left-pads everything to 32 bytes.
+                <code className="inline">hashStruct(s) = keccak256(typeHash ‖ encodeData(s))</code>. encodeData replaces dynamic types with their hashes and left-pads everything to 32 bytes.
               </p>
               <HashRow label="domainHash" hash={domainHash} primary />
               <HashRow label="messageHash" hash={messageHash} primary />
@@ -151,8 +124,7 @@ export default function ComputePage() {
 
             <Step num="05" title="Build the EIP-712 digest preimage">
               <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                Concatenate the EIP-191 prefix, the domain hash, and the message
-                hash. Two bytes plus thirty-two plus thirty-two equals sixty-six.
+                Concatenate the EIP-191 prefix, the domain hash, and the message hash. Two bytes plus thirty-two plus thirty-two equals sixty-six.
               </p>
               <div className="space-y-1 mb-3">
                 <div className="grid grid-cols-[140px_1fr] gap-3 text-xs">
@@ -169,34 +141,26 @@ export default function ComputePage() {
                 </div>
               </div>
               <Labeled label="preimage (66 bytes)">
-                <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all">
-                  {eip712Preimage}
-                </code>
+                <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all">{eip712Preimage}</code>
               </Labeled>
             </Step>
 
             <Step num="06" title="keccak256 → the digest" final>
               <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                The single 32-byte value an ECDSA signer signs. This is the
-                number a hardware wallet should put on its screen.
+                The single 32-byte value an ECDSA signer signs. This is the number a hardware wallet should put on its screen.
               </p>
               <Frame className="p-6 md:p-8 bg-bg-panel">
                 <div className="flex items-baseline justify-between mb-3">
                   <span className="text-accent text-[10px] tracking-[0.25em]">§01</span>
-                  <span className="serif-italic text-ink-dim text-sm">
-                    EIP-712 digest
-                  </span>
+                  <span className="serif-italic text-ink-dim text-sm">EIP-712 digest</span>
                 </div>
-                <code className="hex block text-base md:text-lg break-all">
-                  {digest}
-                </code>
+                <code className="hex block text-base md:text-lg break-all">{digest}</code>
               </Frame>
             </Step>
           </div>
         </div>
       </section>
 
-      {/* Section B: Calldata walkthrough */}
       <section className="border-t border-rule">
         <div className="mx-auto max-w-[1280px] px-6 md:px-10 py-20 md:py-32">
           <div className="grid grid-cols-12 gap-6">
@@ -210,14 +174,10 @@ export default function ComputePage() {
             <div className="col-span-12 md:col-span-10 space-y-12">
               <Step num="01" title="Start with the raw calldata">
                 <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                  A Uniswap V3 <code className="inline">exactInputSingle</code>{" "}
-                  call. {cdLen} bytes total — too long to read, just long enough
-                  to fingerprint.
+                  A Uniswap V3 <code className="inline">exactInputSingle</code> call. {cdLen} bytes total — too long to read, just long enough to fingerprint.
                 </p>
                 <Frame className="p-5">
-                  <code className="hex block text-xs text-ink-dim break-all leading-relaxed">
-                    {exampleCalldata}
-                  </code>
+                  <code className="hex block text-xs text-ink-dim break-all leading-relaxed">{exampleCalldata}</code>
                   <div className="mt-4 pt-4 border-t border-rule flex justify-end">
                     <OpenInCyfrin data={exampleCalldata} label="Decode in Cyfrin Tools" />
                   </div>
@@ -226,46 +186,32 @@ export default function ComputePage() {
 
               <Step num="02" title="Encode the length as a 32-byte word">
                 <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                  Length is a big-endian <code className="inline">uint256</code>.{" "}
-                  {cdLen} = 0x{cdLen.toString(16).padStart(2, "0")} → padded to
-                  32 bytes.
+                  Length is a big-endian <code className="inline">uint256</code>. {cdLen} = 0x{cdLen.toString(16).padStart(2, "0")} → padded to 32 bytes.
                 </p>
                 <Labeled label={`length word — ${cdLen} (uint256)`}>
-                  <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all">
-                    {cdLenWord}
-                  </code>
+                  <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all">{cdLenWord}</code>
                 </Labeled>
               </Step>
 
               <Step num="03" title="Concatenate length ‖ calldata">
                 <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                  The preimage. Identical except for the length prefix, the same
-                  calldata pasted twice would still produce the same digest
-                  here — but two different payloads sharing a common prefix
-                  cannot collide.
+                  The preimage. Identical except for the length prefix, the same calldata pasted twice would still produce the same digest here — but two different payloads sharing a common prefix cannot collide.
                 </p>
                 <Labeled label={`preimage — ${cdLen + 32} bytes`}>
-                  <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all leading-relaxed">
-                    {cdPreimage}
-                  </code>
+                  <code className="block hex text-xs bg-bg-alt border border-rule p-3 break-all leading-relaxed">{cdPreimage}</code>
                 </Labeled>
               </Step>
 
               <Step num="04" title="keccak256 → the digest" final>
                 <p className="text-ink-dim text-sm leading-relaxed mb-4 max-w-[640px]">
-                  The fingerprint. Reproducible from the calldata alone, on any
-                  device, on any chain.
+                  The fingerprint. Reproducible from the calldata alone, on any device, on any chain.
                 </p>
                 <Frame className="p-6 md:p-8 bg-bg-panel">
                   <div className="flex items-baseline justify-between mb-3">
                     <span className="text-accent text-[10px] tracking-[0.25em]">§04</span>
-                    <span className="serif-italic text-ink-dim text-sm">
-                      calldata digest
-                    </span>
+                    <span className="serif-italic text-ink-dim text-sm">calldata digest</span>
                   </div>
-                  <code className="hex block text-base md:text-lg break-all">
-                    {cdDigest}
-                  </code>
+                  <code className="hex block text-base md:text-lg break-all">{cdDigest}</code>
                 </Frame>
               </Step>
             </div>
@@ -296,22 +242,14 @@ function Step({
         >
           step {num}
         </span>
-        <h3 className={`text-xl md:text-2xl ${final ? "text-accent" : "text-ink"}`}>
-          {title}
-        </h3>
+        <h3 className={`text-xl md:text-2xl ${final ? "text-accent" : "text-ink"}`}>{title}</h3>
       </div>
       <div className="pl-0 md:pl-0">{children}</div>
     </div>
   );
 }
 
-function Labeled({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Labeled({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="mb-3">
       <div className="marginalia mb-1.5">{label}</div>
@@ -320,23 +258,11 @@ function Labeled({
   );
 }
 
-function HashRow({
-  label,
-  hash,
-  primary,
-}: {
-  label: string;
-  hash: string;
-  primary?: boolean;
-}) {
+function HashRow({ label, hash, primary }: { label: string; hash: string; primary?: boolean }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-2 md:gap-3 text-xs items-baseline mb-2">
-      <span className={`marginalia ${primary ? "text-accent" : ""}`}>
-        {label}
-      </span>
-      <code className={`hex break-all ${primary ? "text-ink" : "text-ink-dim"}`}>
-        {hash}
-      </code>
+      <span className={`marginalia ${primary ? "text-accent" : ""}`}>{label}</span>
+      <code className={`hex break-all ${primary ? "text-ink" : "text-ink-dim"}`}>{hash}</code>
     </div>
   );
 }
