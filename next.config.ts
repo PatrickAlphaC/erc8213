@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   assetPrefix,
   images: { unoptimized: true },
+  // Make the buildId deterministic so two builds with identical inputs
+  // produce identical `out/` trees (and therefore identical IPFS CIDs).
+  // By default Next emits a random buildId per `next build` — that random
+  // string gets baked into manifests and chunk paths, so every build
+  // would otherwise differ from every other one.
+  generateBuildId: () =>
+    Promise.resolve(process.env.NEXT_PUBLIC_VERSION ?? "dev"),
 };
 
 export default nextConfig;
