@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Nav } from "./components/Nav";
@@ -28,6 +28,9 @@ export const metadata: Metadata = {
       "The standard for displaying EIP-712 and calldata digests so signers can verify what they sign.",
     type: "website",
   },
+};
+
+export const viewport: Viewport = {
   themeColor: "#0c0a08",
 };
 
