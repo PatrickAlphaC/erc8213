@@ -6,10 +6,12 @@ export const dynamic = "force-static";
 const BASE_URL = "https://erc8213.org";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
+  // `lastModified` is omitted intentionally. Stamping `new Date()` here
+  // would make every build produce a different sitemap.xml (and therefore
+  // a different IPFS CID). Crawlers fall back to HTTP fetch metadata when
+  // lastmod is missing, which is fine for a small site.
   return ["", "/wallets", "/implement", "/verify", "/compute"].map((path) => ({
     url: `${BASE_URL}${path}`,
-    lastModified,
     changeFrequency: path === "" ? "weekly" : "monthly",
     priority: path === "" ? 1.0 : 0.8,
   }));
