@@ -1,6 +1,6 @@
 {
   "name": "erc8213",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": false,
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "ipfs:publish": "bash scripts/ipfs-publish.sh",
-    "ipfs:hash": "bash scripts/ipfs-publish.sh --hash-only"
+    "ipfs:hash": "bash scripts/ipfs-publish.sh --hash-only",
+    "release": "bash scripts/release.sh"
   },
   "dependencies": {
     "next": "16.2.5",
