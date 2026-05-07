@@ -9,7 +9,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  # `contents: write` is needed because aave/pinata-action posts a commit
+  # comment with the IPFS link after a successful pin.
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -36,6 +38,14 @@ jobs:
 
       - name: Build static site
         run: pnpm run build
+        env:
+          # Pin the displayed version on the deployed site to the git tag,
+          # so footers and metadata reflect the released version even if
+          # package.json wasn't bumped before tagging.
+          NEXT_PUBLIC_VERSION: ${{ github.ref_name }}
+          # Emit relative asset paths so the build renders correctly under
+          # path-style IPFS gateways (gateway.pinata.cloud/ipfs/<CID>/).
+          NEXT_PUBLIC_IPFS_BUILD: "true"
 
       - name: Deploy to Pinata
         id: pinata

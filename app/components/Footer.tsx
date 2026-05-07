@@ -1,3 +1,11 @@
+import { version as pkgVersion } from "../../package.json";
+
+// At deploy time the IPFS workflow injects NEXT_PUBLIC_VERSION from the
+// pushed git tag (e.g. `v0.1.1`); local + Vercel builds fall back to the
+// version field in package.json.
+const rawVersion = process.env.NEXT_PUBLIC_VERSION ?? pkgVersion;
+const SITE_VERSION = rawVersion.startsWith("v") ? rawVersion : `v${rawVersion}`;
+
 export function Footer() {
   return (
     <footer className="mt-32 border-t border-rule">
@@ -91,6 +99,18 @@ export function Footer() {
             </p>
             <p className="text-ink-faint mt-2">
               not affiliated with the ethereum foundation.
+            </p>
+            <p className="text-ink-faint mt-3 tnum tracking-[0.12em]">
+              <span className="text-accent">{SITE_VERSION}</span>
+              <span className="mx-2">·</span>
+              <a
+                href={`https://github.com/PatrickAlphaC/erc8213/releases/tag/${SITE_VERSION}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-accent transition-colors"
+              >
+                release notes ↗
+              </a>
             </p>
           </div>
         </div>
