@@ -47,6 +47,23 @@ jobs:
           # path-style IPFS gateways (gateway.pinata.cloud/ipfs/<CID>/).
           NEXT_PUBLIC_IPFS_BUILD: "true"
 
+      - name: Generate file inventory
+        # Sorted sha256 manifest of every file in `out/`. Used to debug
+        # CID mismatches: download this artifact and diff against a local
+        # `pnpm inventory` to find which files actually differ.
+        run: |
+          cd out
+          find . -type f -print0 | LC_ALL=C sort -z | \
+            xargs -0 sha256sum > ../out-inventory.txt
+          echo "File count: $(wc -l < ../out-inventory.txt)"
+
+      - name: Upload build inventory
+        uses: actions/upload-artifact@v4
+        with:
+          name: out-inventory-${{ github.ref_name }}
+          path: out-inventory.txt
+          retention-days: 30
+
       - name: Deploy to Pinata
         id: pinata
         uses: aave/pinata-action@35662944e92cf082457973f10aa42e48df179b47  # pinned

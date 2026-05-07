@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "ipfs:publish": "bash scripts/ipfs-publish.sh",
     "ipfs:hash": "bash scripts/ipfs-publish.sh --hash-only",
-    "release": "bash scripts/release.sh"
+    "release": "bash scripts/release.sh",
+    "inventory": "bash scripts/inventory.sh"
   },
   "dependencies": {
     "next": "16.2.5",
