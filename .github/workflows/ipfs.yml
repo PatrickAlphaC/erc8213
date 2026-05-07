@@ -3,9 +3,6 @@ name: Build and Deploy to IPFS
 on:
   release:
     types: [published]
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
 
 permissions:
