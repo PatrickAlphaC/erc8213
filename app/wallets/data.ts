@@ -27,6 +27,7 @@ export const wallets: Wallet[] = [
     support: "yes",
     notes:
       "First implementation. Displays the EIP-712 digest and the calldata digest on every signing prompt.",
+    ref: "https://x.com/PatrickAlphaC/status/2054358838074122350",
     logo: "/wallets/keycard-shell.svg",
     color: "#e6492c",
     url: "https://keycard.tech/",
