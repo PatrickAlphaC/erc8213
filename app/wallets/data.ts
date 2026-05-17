@@ -17,7 +17,7 @@ export type Wallet = {
   url?: string;
 };
 
-export const lastUpdated = "2026-05-07";
+export const lastUpdated = "2026-05-17";
 
 export const wallets: Wallet[] = [
   {
@@ -31,6 +31,18 @@ export const wallets: Wallet[] = [
     logo: "/wallets/keycard-shell.svg",
     color: "#e6492c",
     url: "https://keycard.tech/",
+  },
+  {
+    id: "walletchan",
+    name: "WalletChan",
+    kind: "browser",
+    support: "yes",
+    notes:
+      "Displays the EIP-712 digest on every signing prompt and the calldata digest on every transaction confirmation (single and batch), with hex and Argent emoji-hash views.",
+    ref: "https://github.com/apoorvlathey/walletchan/pull/47",
+    logo: "/wallets/walletchan.png",
+    color: "#D02020",
+    url: "https://walletchan.com/",
   },
   {
     id: "metamask",
