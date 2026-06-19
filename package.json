@@ -9,10 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
-    "ipfs:publish": "bash scripts/ipfs-publish.sh",
-    "ipfs:hash": "bash scripts/ipfs-publish.sh --hash-only",
-    "release": "bash scripts/release.sh"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "next": "16.2.5",

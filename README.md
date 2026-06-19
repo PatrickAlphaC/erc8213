@@ -115,7 +115,7 @@ public/
 
 ## Deployment
 
-To cut a versioned release (bump → tag → GitHub Release → IPFS pin), see [RELEASE.md](./RELEASE.md).
+To cut a versioned release (build → pin to IPFS → set the `erc8213.eth` contenthash via the Safe → GitHub Release), see [`release/README.md`](./release/README.md).
 
 ### Vercel
 

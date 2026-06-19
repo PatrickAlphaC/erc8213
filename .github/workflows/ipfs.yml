@@ -1,8 +1,11 @@
+# Manual-only IPFS pin (break-glass). The canonical release flow lives in
+# `release/` — `pnpm release` from your terminal builds, pins, and proposes the
+# erc8213.eth contenthash transaction to the Safe. This workflow only re-pins a
+# tag's build to Pinata from CI using repo secrets; run it from the tag ref via
+# Actions → Run workflow.
 name: Build and Deploy to IPFS
 
 on:
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:
