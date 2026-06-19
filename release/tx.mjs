@@ -22,6 +22,11 @@ const CHAIN_ID = 1;
 const ZERO_ADDR = "0x0000000000000000000000000000000000000000";
 const ENS_REGISTRY = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e";
 
+// Hosted build of the localsafe.eth Safe-signing app, used to submit + sign the
+// transaction (same Safe, so it opens with the tx pre-filled). The content-
+// addressed mirror at https://localsafe.eth.limo serves the same app.
+const LOCALSAFE_APP = "https://localsafe.cyfrin.io";
+
 async function readEnsState(client, name) {
   const node = namehash(name);
   const [owner, resolver] = await Promise.all([
@@ -106,7 +111,7 @@ function localsafeUrl(localsafeTx) {
   const json = JSON.stringify(localsafeTx);
   const b64 = Buffer.from(json, "utf-8").toString("base64");
   const encoded = encodeURIComponent(b64);
-  return `https://localsafe.eth.limo/#/safe/${SAFE_ADDRESS}?importTx=${encoded}&chainId=${CHAIN_ID}`;
+  return `${LOCALSAFE_APP}/#/safe/${SAFE_ADDRESS}?importTx=${encoded}&chainId=${CHAIN_ID}`;
 }
 
 function safeBuilderUrl() {
@@ -282,7 +287,7 @@ async function tx() {
 
   console.log("\nWrote:");
   console.log(`  ${path.relative(HERE, batchPath)}      (Safe TX Builder)`);
-  console.log(`  ${path.relative(HERE, localsafePath)}   (localsafe.eth)`);
+  console.log(`  ${path.relative(HERE, localsafePath)}   (localsafe.cyfrin.io)`);
   console.log(`  ${path.relative(HERE, summaryPath)}     (human-readable verification)`);
 
   console.log("\nFunction call (verify each on your hardware wallet):");
@@ -302,7 +307,7 @@ async function tx() {
   console.log("\nSubmit via Safe TX Builder (load release/tx-data/safe-batch.json):");
   console.log(`  ${safeBuilderUrl()}`);
 
-  console.log("\n…or via localsafe.eth (click to open with the tx pre-filled):");
+  console.log("\n…or via localsafe.cyfrin.io (click to open with the tx pre-filled):");
   console.log(`  ${localsafeUrl(localsafeTx)}`);
 
   console.log("\nAfter the Safe transaction executes on-chain, run `pnpm release:publish` to cut a GitHub release.");

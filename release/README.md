@@ -49,7 +49,7 @@ git push --follow-tags
 The script prints two options at the end:
 
 - **Safe TX Builder** — open the printed URL, click "Load batch", upload `tx-data/safe-batch.json`.
-- **localsafe.eth** — click the printed URL; the transaction is pre-filled via the URL fragment. (It's the same Safe, so the localsafe.eth tool signs it directly.)
+- **localsafe.cyfrin.io** — click the printed URL; the transaction is pre-filled via the URL fragment. (It's the same Safe, so the localsafe app signs it directly. The content-addressed mirror at `localsafe.eth.limo` works too.)
 
 ### 3. Each signer verifies on their hardware wallet
 
@@ -93,7 +93,7 @@ The full static export of the Next.js app, plus a `release-manifest.json` with t
 | | |
 |---|---|
 | `safe-batch.json` | Safe TX Builder format |
-| `localsafe-tx.json` | localsafe.eth `importTx` format |
+| `localsafe-tx.json` | localsafe `importTx` format |
 | `tx-summary.txt` | human-readable summary for hardware-wallet verification |
 
 ## Individual commands
