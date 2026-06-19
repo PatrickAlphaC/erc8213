@@ -115,6 +115,8 @@ public/
 
 ## Deployment
 
+To cut a versioned release (bump → tag → GitHub Release → IPFS pin), see [RELEASE.md](./RELEASE.md).
+
 ### Vercel
 
 The site is a vanilla Next.js project with `output: "export"`. Connect the repo on Vercel and ship — no environment variables required.
