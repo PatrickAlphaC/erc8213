@@ -17,7 +17,7 @@ export type Wallet = {
   url?: string;
 };
 
-export const lastUpdated = "2026-05-17";
+export const lastUpdated = "2026-06-23";
 
 export const wallets: Wallet[] = [
   {
@@ -43,6 +43,18 @@ export const wallets: Wallet[] = [
     logo: "/wallets/walletchan.png",
     color: "#D02020",
     url: "https://walletchan.com/",
+  },
+  {
+    id: "jaw",
+    name: "JAW.id",
+    kind: "smart-contract",
+    support: "yes",
+    notes:
+      "Displays the EIP-712 digest (with domain and message hashes) on every signing prompt and a length-prefixed calldata digest on transaction confirmations, shown as copyable hashes alongside its ERC-7730 human-readable descriptions.",
+    ref: "https://github.com/JustaName-id/jaw-mono/pull/212",
+    logo: "/wallets/jaw.svg",
+    color: "#1E2340",
+    url: "https://jaw.id/",
   },
   {
     id: "metamask",
