@@ -17,7 +17,7 @@ export type Wallet = {
   url?: string;
 };
 
-export const lastUpdated = "2026-05-17";
+export const lastUpdated = "2026-10-08";
 
 export const wallets: Wallet[] = [
   {
@@ -43,6 +43,18 @@ export const wallets: Wallet[] = [
     logo: "/wallets/walletchan.png",
     color: "#D02020",
     url: "https://walletchan.com/",
+  },
+  {
+    id: "keycard-pal",
+    name: "Keycard Pal",
+    kind: "mobile",
+    support: "yes",
+    notes:
+      "Displays the EIP-712 Digest on typed-data requests, adding the Domain Hash and Message Hash when the request arrives pre-hashed, the Calldata Digest on transactions that carry calldata and the ERC-191 Digest on personal_sign. Signs with a Keycard tapped to the phone.",
+    ref: "https://github.com/mmlado/keycard-pal/releases/tag/v1.14.0",
+    logo: "/wallets/keycard-pal.svg",
+    color: "#ff6400",
+    url: "https://keycardpal.com/",
   },
   {
     id: "metamask",
